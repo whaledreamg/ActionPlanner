@@ -8,7 +8,9 @@
 *.so
 *.so.*
 *.dll
-*.dylib
+*.lddylib
+build
+android
 
 # Qt-es
 object_script.*.Release
