@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RobotControlPanel</class>
+ <widget class="QWidget" name="RobotControlPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>363</width>
+    <height>669</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>400</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>机器人控制</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+/* 主面板样式 */
+QWidget#RobotControlPanel {
+    background-color: #0F131C;
+    border-radius: 8px;
+}
+
+/* 切换按钮 - 未选中状态（失能） */
+QPushButton#btnToggleLeft,
+QPushButton#btnToggleRight {
+    background-color: #1E2636;
+    border: 2px solid #38BDF8;
+    color: #38BDF8;
+    border-radius: 5px;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 9pt;
+    min-height: 22px;
+    min-width: 84px;
+}
+
+QPushButton#btnToggleLeft:hover,
+QPushButton#btnToggleRight:hover {
+    background-color: #263445;
+    border-color: #4AC5FF;
+    color: #4AC5FF;
+}
+
+QPushButton#btnToggleLeft:pressed,
+QPushButton#btnToggleRight:pressed {
+    background-color: #2A3A50;
+}
+
+/* 切换按钮 - 选中状态（使能） */
+QPushButton#btnToggleLeft:checked,
+QPushButton#btnToggleRight:checked {
+    background-color: #6EE7B7;
+    border-color: #6EE7B7;
+    color: #0A0D12;
+}
+
+QPushButton#btnToggleLeft:checked:hover,
+QPushButton#btnToggleRight:checked:hover {
+    background-color: #7EEFC3;
+    border-color: #7EEFC3;
+}
+
+/* 切换按钮 - 禁用状态 */
+QPushButton#btnToggleLeft:disabled,
+QPushButton#btnToggleRight:disabled {
+    background-color: #161D2B;
+    border-color: #2A3444;
+    color: #8A94A6;
+}
+
+/* 分组框样式 */
+QGroupBox {
+    background-color: #161D2B;
+    border: 1px solid #1E2636;
+    border-radius: 8px;
+    margin-top: 12px;
+    padding: 16px 8px 8px 8px;
+    font-weight: bold;
+    color: #E8E9ED;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 12px;
+    padding: 0 6px;
+    color: #38BDF8;
+}
+
+/* 标签样式 */
+QLabel {
+    color: #C8D2E0;
+    font-size: 9pt;
+}
+
+/* 输入框样式 */
+QLineEdit {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #E8E9ED;
+    font-size: 10pt;
+}
+
+QLineEdit:focus {
+    border: 1px solid #38BDF8;
+    background-color: #242D3D;
+}
+
+QSpinBox {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 6px 8px;
+    color: #E8E9ED;
+}
+
+/* 下拉框（灵巧手预设手势等）：与输入框同色 */
+QComboBox {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #E8E9ED;
+    font-size: 10pt;
+    min-height: 20px;
+}
+
+QComboBox:hover, QComboBox:focus {
+    border: 1px solid #38BDF8;
+    background-color: #242D3D;
+}
+
+QComboBox:disabled {
+    background-color: #161D2B;
+    color: #8A94A6;
+    border: 1px solid #1E2636;
+}
+
+/* 展开的条目列表是独立顶层窗口，不继承上面的 QComboBox 规则，
+   必须单独指定背景/文字/选中态，否则条目文字会回退成系统深色，
+   压在深色底上几乎看不见 */
+QComboBox QAbstractItemView {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 4px;
+    color: #E8E9ED;
+    outline: none;
+    selection-background-color: #38BDF8;
+    selection-color: #0A0D12;
+}
+
+QComboBox QAbstractItemView::item {
+    color: #E8E9ED;
+    background-color: transparent;
+    min-height: 26px;
+    padding: 2px 6px;
+}
+
+QComboBox QAbstractItemView::item:selected {
+    background-color: #38BDF8;
+    color: #0A0D12;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: #2A3444;
+    color: #E8E9ED;
+}
+
+/* 按钮样式 */
+QPushButton {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 8px 16px;
+    color: #E8E9ED;
+    font-size: 10pt;
+    font-weight: 500;
+}
+
+QPushButton:hover {
+    background-color: #242D3D;
+    border: 1px solid #38BDF8;
+}
+
+QPushButton:pressed {
+    background-color: #2A3444;
+}
+
+QPushButton:disabled {
+    background-color: #161D2B;
+    color: #8A94A6;
+    border: 1px solid #1E2636;
+}
+
+/* 主要动作按钮 */
+QPushButton#btnConnect,
+QPushButton#btnEnableLeft,
+QPushButton#btnEnableRight {
+    background-color: #38BDF8;
+    border: none;
+    color: #0A0D12;
+    font-weight: 600;
+}
+
+QPushButton#btnConnect:hover,
+QPushButton#btnEnableLeft:hover,
+QPushButton#btnEnableRight:hover {
+    background-color: #4AC5FF;
+}
+
+QPushButton#btnConnect:pressed,
+QPushButton#btnEnableLeft:pressed,
+QPushButton#btnEnableRight:pressed {
+    background-color: #2AA9DD;
+}
+
+/* 危险动作按钮 */
+QPushButton#btnDisableLeft,
+QPushButton#btnDisableRight {
+    background-color: #E94560;
+    border: none;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+QPushButton#btnDisableLeft:hover,
+QPushButton#btnDisableRight:hover {
+    background-color: #F05575;
+}
+
+/* Tab标签页样式 */
+QTabWidget::pane {
+    background-color: #161D2B;
+    border: 1px solid #1E2636;
+    border-radius: 8px;
+    top: -1px;
+}
+
+QTabBar::tab {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-bottom: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding: 8px 20px;
+    margin-right: 4px;
+    color: #C8D2E0;
+    font-weight: 500;
+}
+
+QTabBar::tab:selected {
+    background-color: #161D2B;
+    color: #38BDF8;
+    border-color: #38BDF8;
+    border-bottom: 1px solid #161D2B;
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: #242D3D;
+    color: #E8E9ED;
+}
+
+/* 滚动区域样式 */
+QScrollArea {
+    background-color: transparent;
+    border: none;
+}
+
+QScrollArea &gt; QWidget &gt; QWidget {
+    background-color: transparent;
+}
+
+QScrollBar:vertical {
+    background-color: #1E2636;
+    width: 10px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #38BDF8;
+    border-radius: 5px;
+    min-height: 20px;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+   </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="connectionGroup">
+     <property name="title">
+      <string>机器人连接</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_conn">
+      <property name="spacing">
+       <number>8</number>
+      </property>
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="horizontalSpacing">
+         <number>12</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>8</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelHost">
+          <property name="text">
+           <string>IP地址:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditHost">
+          <property name="text">
+           <string>192.168.100.16</string>
+          </property>
+          <property name="placeholderText">
+           <string>输入机器人控制器IP</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelPort">
+          <property name="text">
+           <string>端口:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="spinBoxPort">
+          <property name="maximum">
+           <number>65535</number>
+          </property>
+          <property name="value">
+           <number>9000</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnConnect">
+        <property name="text">
+         <string>连接机器人</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelStatus">
+        <property name="styleSheet">
+         <string notr="true">
+QLabel {
+    color: #C8D2E0;
+    background-color: #1E2636;
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 9pt;
+}
+         </string>
+        </property>
+        <property name="text">
+         <string>● 未连接</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabLeftArm">
+      <attribute name="title">
+       <string>左臂控制</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_left">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_left">
+         <property name="spacing">
+          <number>8</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btnToggleLeft">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>使能</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnGetCurrentAnglesLeft">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>📋 获取当前角度</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QScrollArea" name="scrollAreaLeft">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_left">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>319</width>
+            <height>242</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabRightArm">
+      <attribute name="title">
+       <string>右臂控制</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_right">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_right">
+         <property name="spacing">
+          <number>8</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="btnToggleRight">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>使能</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnGetCurrentAnglesRight">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>📋 获取当前角度</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QScrollArea" name="scrollAreaRight">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_right">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>319</width>
+            <height>242</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabHand">
+      <attribute name="title">
+       <string>灵巧手</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_hand">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="labelHandHint">
+         <property name="styleSheet">
+          <string notr="true">color: #8A94A6; font-size: 9pt;</string>
+         </property>
+         <property name="text">
+          <string>灵巧手经控制器 rs485 转发，需单独连接。连接成功后，播放动作序列时会自动按手片段下发手位；未连接时手位不下发。</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnConnectHand">
+         <property name="text">
+          <string>连接灵巧手</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelHandStatus">
+         <property name="styleSheet">
+          <string notr="true">
+QLabel {
+    color: #C8D2E0;
+    background-color: #1E2636;
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 9pt;
+}
+         </string>
+         </property>
+         <property name="text">
+          <string>● 未连接</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnRefreshHand">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>🔄 读取当前手位</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboHandPreset"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnApplyHandPreset">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>✋ 执行预设手势</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacerHand">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

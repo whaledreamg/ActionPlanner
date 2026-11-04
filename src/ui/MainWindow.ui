@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QWidget" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1280</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>双臂机器人动作规划器 - ActionPlanner</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+QWidget#MainWindow {
+    background-color: #0A0D12;
+}
+
+QWidget {
+    color: #E8E9ED;
+    font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei&quot;, sans-serif;
+    font-size: 10pt;
+}
+
+/* 状态栏：不再用 QStatusBar，换成普通 QLabel 参与同一布局的尺寸分配 */
+QLabel#labelStatusBar {
+    background-color: #0F131C;
+    border-top: 1px solid #1E2636;
+    color: #C8D2E0;
+    font-size: 9pt;
+    padding: 4px 8px;
+}
+
+/* 分栏拖动手柄：默认太粗且颜色突兀 */
+QSplitter::handle {
+    background-color: #1E2636;
+}
+QSplitter::handle:hover {
+    background-color: #38BDF8;
+}
+   </string>
+  </property>
+  <layout class="QVBoxLayout" name="rootLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QSplitter" name="mainSplitter">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
+     <property name="handleWidth">
+      <number>6</number>
+     </property>
+     <widget class="QWidget" name="upperArea" native="true">
+      <layout class="QHBoxLayout" name="upperLayout">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>8</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" name="controlPanelLayout">
+         <property name="sizeConstraint">
+          <enum>QLayout::SizeConstraint::SetFixedSize</enum>
+         </property>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="simulationLayout">
+         <property name="sizeConstraint">
+          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
+         </property>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="timelineArea" native="true">
+      <layout class="QVBoxLayout" name="timelineAreaLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelStatusBar">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>就绪</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

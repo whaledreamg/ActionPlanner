@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  应用图标设计稿：青色四角取景框 + 内部 A 字形机械臂。
+
+  来源是用户提供的 /home/gxh/下载/edit.svg，路径数据与配色 #50e3c2 保持不变，
+  只把 stroke-width 从 4 提到 4.5：图标缩到 16px 时描边约 0.9px，
+  原始粗细在任务栏小视图里会细到快看不见。
+
+  不加额外内边距的原画布（0 0 48 48）直接用作图标图形，
+  四周留白由 tools/make_icons.py 的 GLYPH_RATIO 统一控制，
+  避免两处同时留白导致图形缩得过小。
+
+  tools/make_icons.py 会把本文件渲染成桌面 PNG/ICO、Android mipmap
+  和运行时窗口图标。
+-->
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#50e3c2" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- 左上角 -->
+    <path d="M16 6H6V16"/>
+    <!-- 右上角 -->
+    <path d="M32 6H42V16"/>
+    <!-- 左下角 -->
+    <path d="M16 42H6V32"/>
+    <!-- 右下角 -->
+    <path d="M32 42H42V32"/>
+    <!-- 内部 A 字形（机械臂） -->
+    <path d="M17 32L19.1875 27M31 32L28.8125 27M19.1875 27L24 16L28.8125 27M19.1875 27H28.8125"/>
+  </g>
+</svg>

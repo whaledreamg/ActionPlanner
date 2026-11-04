@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SimulationWidget</class>
+ <widget class="QWidget" name="SimulationWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>3D仿真</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+QWidget#SimulationWidget {
+    background-color: #0A0D12;
+}
+
+QLabel {
+    color: #C8D2E0;
+    font-size: 10pt;
+}
+
+QComboBox {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: #E8E9ED;
+    min-width: 200px;
+}
+
+QComboBox:hover {
+    border: 1px solid #38BDF8;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #C8D2E0;
+    margin-right: 8px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #1E2636;
+    border: 1px solid #38BDF8;
+    selection-background-color: #38BDF8;
+    selection-color: #0A0D12;
+    outline: none;
+}
+
+QPushButton {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 8px 16px;
+    color: #E8E9ED;
+    font-size: 10pt;
+    font-weight: 500;
+}
+
+QPushButton:hover {
+    background-color: #242D3D;
+    border: 1px solid #38BDF8;
+}
+
+QPushButton:pressed {
+    background-color: #2A3444;
+}
+
+QPushButton#btnLoadURDF {
+    background-color: #38BDF8;
+    border: none;
+    color: #0A0D12;
+    font-weight: 600;
+}
+
+QPushButton#btnLoadURDF:hover {
+    background-color: #4AC5FF;
+}
+   </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="topBarLayout">
+     <property name="spacing">
+      <number>12</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="labelTitle">
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #38BDF8;
+}
+        </string>
+       </property>
+       <property name="text">
+        <string>3D 机器人仿真</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelURDF">
+       <property name="text">
+        <string>URDF模型:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxURDF">
+       <property name="toolTip">
+        <string>选择机器人URDF模型文件</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnLoadURDF">
+       <property name="toolTip">
+        <string>加载选中的URDF模型</string>
+       </property>
+       <property name="text">
+        <string>加载模型</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QWidget" name="renderContainer" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+QWidget#renderContainer {
+    background-color: #161D2B;
+    border: 1px solid #1E2636;
+    border-radius: 8px;
+}
+      </string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="infoBarLayout">
+     <property name="spacing">
+      <number>16</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="labelInfo">
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: #6EE7B7;
+    font-size: 9pt;
+    padding: 4px 8px;
+    background-color: #1E2636;
+    border-radius: 4px;
+}
+        </string>
+       </property>
+       <property name="text">
+        <string>💡 提示: 鼠标左键拖动旋转，滚轮缩放</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelFPS">
+       <property name="styleSheet">
+        <string notr="true">
+QLabel {
+    color: #C8D2E0;
+    font-size: 9pt;
+    font-family: monospace;
+}
+        </string>
+       </property>
+       <property name="text">
+        <string>FPS: --</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

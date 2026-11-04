@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/icons/appicon.png</file>
+    </qresource>
+    <qresource prefix="/models/model">
+        <file>model/urdf_dualarm/dualarm.urdf</file>
+        <file>model/urdf_dualarm/meshes/left_base_link.STL</file>
+        <file>model/urdf_dualarm/meshes/left_j1_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/left_j2_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/left_j3_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/left_j4_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/left_j5_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/left_j6_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/left_j7_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_base_link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_j1_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_j2_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_j3_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_j4_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_j5_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_j6_Link.STL</file>
+        <file>model/urdf_dualarm/meshes/right_j7_Link.STL</file>
+    </qresource>
+</RCC>
