@@ -60,6 +60,11 @@ private slots:
 
 private:
     void createJointControls();
+    /** 生成一条臂的 7 行点动控件（Grid 布局，各行对齐成列） */
+    void buildJointRows(QWidget* contents, const QString& arm,
+                        QVector<QLabel*>* valueLabels,
+                        QVector<QPushButton*>* minusButtons,
+                        QVector<QPushButton*>* plusButtons);
     void updateJointDisplay(const QString& arm, const QVector<double>& joints);
     void updateTCPDisplay(const QString& arm, double x, double y, double z);
     void createHandControls();

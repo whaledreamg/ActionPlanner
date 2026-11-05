@@ -70,6 +70,9 @@ public slots:
     void onSave();
     void onLoad();
 
+    /** 新建动作序列：清空时间轴，从头开始编排 */
+    void onNew();
+
 private slots:
     void onAddSegment();
     /** 添加夹爪片段：只驱动灵巧手，机械臂保持不动 */

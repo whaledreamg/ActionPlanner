@@ -1,5 +1,6 @@
 #include "ui/TimelineSettingsDialog.h"
 #include "ui/DialogUtil.h"
+#include "ui/TouchComboBox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -134,7 +135,7 @@ void TimelineSettingsDialog::setupUi()
 
     streamGrid->addWidget(new QLabel(QStringLiteral("下发频率"), streamGroup), 0, 0);
 
-    m_frequencyCombo = new QComboBox(streamGroup);
+    m_frequencyCombo = new TouchComboBox(streamGroup);
     m_frequencyCombo->setToolTip(
         QStringLiteral("UDP 关节流发送频率。降低可减少控制器负载；\n"
                        "配合发送端插值，100Hz 已足够平滑。"));

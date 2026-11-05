@@ -1,5 +1,6 @@
 #include "ui/ArmSegmentEditDialog.h"
 #include "ui/DialogUtil.h"
+#include "ui/TouchComboBox.h"
 
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -76,20 +77,20 @@ QWidget* ArmSegmentEditDialog::createToolbar()
     opts->setVerticalSpacing(8);
 
     opts->addWidget(new QLabel(QStringLiteral("插值"), bar), 0, 0);
-    m_interpCombo = new QComboBox(bar);
+    m_interpCombo = new TouchComboBox(bar);
     m_interpCombo->addItem(QStringLiteral("线性 linear"), QStringLiteral("linear"));
     m_interpCombo->addItem(QStringLiteral("三次 cubic"), QStringLiteral("cubic"));
     m_interpCombo->addItem(QStringLiteral("样条 spline"), QStringLiteral("spline"));
     opts->addWidget(m_interpCombo, 0, 1);
 
     opts->addWidget(new QLabel(QStringLiteral("角度单位"), bar), 0, 2);
-    m_unitCombo = new QComboBox(bar);
+    m_unitCombo = new TouchComboBox(bar);
     m_unitCombo->addItem(QStringLiteral("度 (°)"), true);
     m_unitCombo->addItem(QStringLiteral("弧度 (rad)"), false);
     opts->addWidget(m_unitCombo, 0, 3);
 
     opts->addWidget(new QLabel(QStringLiteral("预览"), bar), 1, 0);
-    m_previewCombo = new QComboBox(bar);
+    m_previewCombo = new TouchComboBox(bar);
     m_previewCombo->addItem(QStringLiteral("结束角"), true);
     m_previewCombo->addItem(QStringLiteral("起点（上一段终点）"), false);
     m_previewCombo->setToolTip(QStringLiteral("编辑时 3D 视图跟随预览哪个姿态"));

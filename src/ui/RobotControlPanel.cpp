@@ -1,12 +1,15 @@
 #include "ui/RobotControlPanel.h"
 #include "ui_RobotControlPanel.h"
 #include "ui/MessageCenter.h"
+#include "ui/DialogUtil.h"
 #include "robot/HandController.h"
 #include <QComboBox>
 #include <QHBoxLayout>
+#include <QGridLayout>
 #include <QJsonArray>
 #include <QTimer>
 #include <QDebug>
+#include <QtMath>
 
 namespace {
 /**
@@ -126,7 +129,14 @@ RobotControlPanel::RobotControlPanel(QWidget *parent)
     createJointControls();
     createHandControls();
     updateHandUi();
-    
+
+    // 下拉框的展开列表是独立顶层窗口，条目高度只由样式表决定，
+    // 布局撑不开。桌面 26px 的条目在平板上按不准，这里补一套触摸尺寸。
+    const QString comboTouch = DialogUtil::comboTouchStyleSheet();
+    if (!comboTouch.isEmpty()) {
+        setStyleSheet(styleSheet() + comboTouch);
+    }
+
     ui->btnToggleLeft->setEnabled(false);
     ui->btnToggleRight->setEnabled(false);
 }
@@ -138,85 +148,92 @@ RobotControlPanel::~RobotControlPanel()
 
 void RobotControlPanel::createJointControls()
 {
-    // Create left arm joint controls
-    QVBoxLayout* leftLayout = qobject_cast<QVBoxLayout*>(
-        ui->scrollAreaWidgetContents_left->layout());
-    if (!leftLayout) {
-        leftLayout = new QVBoxLayout(ui->scrollAreaWidgetContents_left);
+    buildJointRows(ui->scrollAreaWidgetContents_left, QStringLiteral("left"),
+                   &m_leftJointLabels, &m_leftJogMinusButtons, &m_leftJogPlusButtons);
+    buildJointRows(ui->scrollAreaWidgetContents_right, QStringLiteral("right"),
+                   &m_rightJointLabels, &m_rightJogMinusButtons, &m_rightJogPlusButtons);
+}
+
+/**
+ * 生成一条臂的 7 行点动控件。
+ *
+ * 布局是「减号贴左、加号贴右、角度居中」：
+ *   [ - ]   J1        [ + ]
+ *          12.3°
+ *
+ * 用 Grid 的三列 + 中间列 stretch 实现整行撑满：减号固定在左边缘，
+ * 加号固定在右边缘，角度值落在正中间。之前用固定宽度堆在左边、
+ * 右边留一大片空白，加号离面板边缘很远，看着很怪。
+ */
+void RobotControlPanel::buildJointRows(QWidget* contents, const QString& arm,
+                                       QVector<QLabel*>* valueLabels,
+                                       QVector<QPushButton*>* minusButtons,
+                                       QVector<QPushButton*>* plusButtons)
+{
+    QVBoxLayout* box = qobject_cast<QVBoxLayout*>(contents->layout());
+    if (!box) {
+        box = new QVBoxLayout(contents);
     }
-    
+
+    QGridLayout* grid = new QGridLayout;
+    grid->setContentsMargins(2, 2, 2, 2);
+    grid->setHorizontalSpacing(10);
+    grid->setVerticalSpacing(8);
+
     for (int i = 0; i < 7; ++i) {
-        QWidget* jointWidget = new QWidget();
-        QHBoxLayout* layout = new QHBoxLayout(jointWidget);
-        
-        QLabel* label = new QLabel(QString("J%1: 0.000").arg(i+1));
-        label->setMinimumWidth(100);
-        m_leftJointLabels.append(label);
-        
-        QPushButton* minusBtn = new QPushButton("-");
-        minusBtn->setMaximumWidth(40);
-        m_leftJogMinusButtons.append(minusBtn);
-        connect(minusBtn, &QPushButton::pressed, [this, i]() {
-            onJogButtonPressed("left", i, -1);
+        const int row = i;
+
+        // 减号按钮：最左列，固定宽度并靠左
+        QPushButton* minusBtn = new QPushButton(QStringLiteral("-"), contents);
+        minusBtn->setFixedWidth(48);
+        minusButtons->append(minusBtn);
+        connect(minusBtn, &QPushButton::pressed, [this, arm, i]() {
+            onJogButtonPressed(arm, i, -1);
         });
-        connect(minusBtn, &QPushButton::released, 
+        connect(minusBtn, &QPushButton::released,
                 this, &RobotControlPanel::onJogButtonReleased);
-        
-        QPushButton* plusBtn = new QPushButton("+");
-        plusBtn->setMaximumWidth(40);
-        m_leftJogPlusButtons.append(plusBtn);
-        connect(plusBtn, &QPushButton::pressed, [this, i]() {
-            onJogButtonPressed("left", i, 1);
+        grid->addWidget(minusBtn, row, 0, Qt::AlignLeft | Qt::AlignVCenter);
+
+        // 中间列：关节名在上、当前角度在下，竖排居中
+        QWidget* center = new QWidget(contents);
+        QVBoxLayout* centerLayout = new QVBoxLayout(center);
+        centerLayout->setContentsMargins(0, 0, 0, 0);
+        centerLayout->setSpacing(0);
+
+        QLabel* nameLabel = new QLabel(QString("J%1").arg(i+1), center);
+        nameLabel->setAlignment(Qt::AlignCenter);
+        nameLabel->setStyleSheet(
+            QStringLiteral("color:#8A94A6; font-size:8pt;"));
+        centerLayout->addWidget(nameLabel);
+
+        // 角度值：正中间，点动时可以直接盯着它走
+        QLabel* valueLabel = new QLabel(QStringLiteral("--.-°"), center);
+        valueLabel->setAlignment(Qt::AlignCenter);
+        valueLabel->setStyleSheet(
+            QStringLiteral("color:#38BDF8; font-family:Consolas,monospace; font-size:11pt;"));
+        valueLabels->append(valueLabel);
+        centerLayout->addWidget(valueLabel);
+
+        grid->addWidget(center, row, 1, Qt::AlignCenter);
+
+        // 加号按钮：最右列，固定宽度并靠右
+        QPushButton* plusBtn = new QPushButton(QStringLiteral("+"), contents);
+        plusBtn->setFixedWidth(48);
+        plusButtons->append(plusBtn);
+        connect(plusBtn, &QPushButton::pressed, [this, arm, i]() {
+            onJogButtonPressed(arm, i, 1);
         });
-        connect(plusBtn, &QPushButton::released, 
+        connect(plusBtn, &QPushButton::released,
                 this, &RobotControlPanel::onJogButtonReleased);
-        
-        layout->addWidget(label);
-        layout->addWidget(minusBtn);
-        layout->addWidget(plusBtn);
-        
-        leftLayout->addWidget(jointWidget);
+        grid->addWidget(plusBtn, row, 2, Qt::AlignRight | Qt::AlignVCenter);
     }
-    
-    // Create right arm joint controls
-    QVBoxLayout* rightLayout = qobject_cast<QVBoxLayout*>(
-        ui->scrollAreaWidgetContents_right->layout());
-    if (!rightLayout) {
-        rightLayout = new QVBoxLayout(ui->scrollAreaWidgetContents_right);
-    }
-    
-    for (int i = 0; i < 7; ++i) {
-        QWidget* jointWidget = new QWidget();
-        QHBoxLayout* layout = new QHBoxLayout(jointWidget);
-        
-        QLabel* label = new QLabel(QString("J%1: 0.000").arg(i+1));
-        label->setMinimumWidth(100);
-        m_rightJointLabels.append(label);
-        
-        QPushButton* minusBtn = new QPushButton("-");
-        minusBtn->setMaximumWidth(40);
-        m_rightJogMinusButtons.append(minusBtn);
-        connect(minusBtn, &QPushButton::pressed, [this, i]() {
-            onJogButtonPressed("right", i, -1);
-        });
-        connect(minusBtn, &QPushButton::released, 
-                this, &RobotControlPanel::onJogButtonReleased);
-        
-        QPushButton* plusBtn = new QPushButton("+");
-        plusBtn->setMaximumWidth(40);
-        m_rightJogPlusButtons.append(plusBtn);
-        connect(plusBtn, &QPushButton::pressed, [this, i]() {
-            onJogButtonPressed("right", i, 1);
-        });
-        connect(plusBtn, &QPushButton::released, 
-                this, &RobotControlPanel::onJogButtonReleased);
-        
-        layout->addWidget(label);
-        layout->addWidget(minusBtn);
-        layout->addWidget(plusBtn);
-        
-        rightLayout->addWidget(jointWidget);
-    }
+
+    // 中间列吃掉剩余宽度，角度值因此落在整行的正中间；
+    // 左右两列不设 stretch，按钮按对齐方式贴住两侧边缘
+    grid->setColumnStretch(1, 1);
+
+    box->addLayout(grid);
+    box->addStretch(1);
 }
 
 void RobotControlPanel::onConnectClicked()
@@ -304,6 +321,15 @@ void RobotControlPanel::onDisconnected()
     ui->btnToggleRight->setChecked(false);
     ui->btnGetCurrentAnglesLeft->setEnabled(false);
     ui->btnGetCurrentAnglesRight->setEnabled(false);
+
+    // 断开后实测值不再更新，把角度显示复位成占位符。
+    // 留着旧数值会让人以为机械臂还停在那儿。
+    for (QLabel* l : m_leftJointLabels) {
+        l->setText(QStringLiteral("--.-°"));
+    }
+    for (QLabel* l : m_rightJointLabels) {
+        l->setText(QStringLiteral("--.-°"));
+    }
 
     // 机械臂断开时灵巧手的 rs485 通道也走不了，本地状态一并作废
     if (m_hand) {
@@ -507,15 +533,18 @@ void RobotControlPanel::onResponseReceived(const QJsonObject& response)
     }
 }
 
-void RobotControlPanel::updateJointDisplay(const QString& arm, 
+void RobotControlPanel::updateJointDisplay(const QString& arm,
                                           const QVector<double>& joints)
 {
     QVector<QLabel*>* labels = (arm == "left") ? &m_leftJointLabels : &m_rightJointLabels;
-    
+
     for (int i = 0; i < qMin(joints.size(), labels->size()); ++i) {
-        (*labels)[i]->setText(QString("J%1: %2").arg(i+1).arg(joints[i], 0, 'f', 3));
+        // 显示角度（度）而不是弧度：弧度的 3 位小数人根本读不出是哪个位置，
+        // 度数一眼就能对照机械臂的实际姿态。
+        (*labels)[i]->setText(QStringLiteral("%1°")
+                                  .arg(qRadiansToDegrees(joints[i]), 0, 'f', 1));
     }
-    
+
     // 不在这里emit，在onRobotStateUpdated中emit
 }
 
@@ -658,8 +687,22 @@ void RobotControlPanel::createHandControls()
     for (const QString &name : HandProtocol::presetNames()) {
         ui->comboHandPreset->addItem(name, name);
     }
-}
 
+    // 弹出列表是独立顶层窗口，条目高度只由样式表决定，布局撑不开。
+    // 桌面 26px 的条目在平板上按不准，直接给 view() 设触摸尺寸。
+    DialogUtil::applyTouchCombo(ui->comboHandPreset);
+
+#ifdef Q_OS_ANDROID
+    // 本体的触摸高度（TouchComboBox 默认 48px）对这个下拉框偏高：
+    // 它夹在「读取当前手位」和「执行预设手势」两个按钮中间，太高显得头重脚轻。
+    // 收到 34px 仍然够手指点中。
+    // min-height 必须写进控件自己的样式表：祖先样式表里的 QComboBox 规则
+    // 在 QStyleSheetStyle 里会覆盖 setMinimumHeight 的结果。
+    ui->comboHandPreset->setMinimumHeight(34);
+    ui->comboHandPreset->setStyleSheet(QStringLiteral(
+        "QComboBox { min-height: 34px; padding: 2px 10px; font-size: 11pt; }"));
+#endif
+}
 void RobotControlPanel::updateHandUi()
 {
     // 连接成功即代表要控制手，不再有独立的「启用」开关

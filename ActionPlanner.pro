@@ -40,6 +40,7 @@ SOURCES += \
     src/ui/HandSegmentEditDialog.cpp \
     src/ui/TimelineSettingsDialog.cpp \
     src/ui/MessageCenter.cpp \
+    src/ui/TouchComboBox.cpp \
     src/robot/RobotConnection.cpp \
     src/robot/RobotStateManager.cpp \
     src/robot/RealtimeController.cpp \
@@ -70,6 +71,7 @@ HEADERS += \
     src/ui/TimelineSettingsDialog.h \
     src/ui/DialogUtil.h \
     src/ui/MessageCenter.h \
+    src/ui/TouchComboBox.h \
     src/robot/RobotConnection.h \
     src/robot/RobotStateManager.h \
     src/robot/RealtimeController.h \

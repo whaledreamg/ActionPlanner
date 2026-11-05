@@ -585,7 +585,11 @@ QLabel {
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboHandPreset"/>
+        <widget class="TouchComboBox" name="comboHandPreset">
+         <property name="toolTip">
+          <string>选择要执行的预设手势</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnApplyHandPreset">
@@ -616,6 +620,14 @@ QLabel {
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TouchComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ui/TouchComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

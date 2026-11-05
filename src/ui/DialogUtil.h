@@ -2,6 +2,8 @@
 #define UI_DIALOGUTIL_H
 
 #include <QDialog>
+#include <QComboBox>
+#include <QAbstractItemView>
 #include <QEvent>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -152,6 +154,103 @@ QSlider::handle:horizontal {
 }
 
 /**
+ * 下拉框条目列表的触摸尺寸。
+ *
+ * 弹出列表是独立顶层窗口，条目高度完全由样式表决定，没法用布局去撑。
+ * 桌面 26px 是鼠标的尺寸，手指在平板上按下去常常落在两个条目之间的
+ * 缝里，表现就是「列表弹出来了但点不中」。移动端必须把条目加高到
+ * 手指能稳定按住的程度。
+ */
+inline int touchComboItemHeight()
+{
+#ifdef Q_OS_ANDROID
+    return 52;
+#else
+    return 26;
+#endif
+}
+
+/**
+ * 下拉框的移动端触摸样式。
+ *
+ * 要点：
+ *   - 条目 min-height 给到 52px，手指能压中；
+ *   - 条目字号放大到 12pt，10pt 在平板上偏小；
+ *   - 下拉框本体（收起状态）也加高，否则展开后条目很大、
+ *     收起时却还是矮矮一条，视觉上不匹配。
+ *   - 加宽内边距，条目之间留出横向余量，避免贴边。
+ */
+inline QString comboTouchStyleSheet()
+{
+#ifdef Q_OS_ANDROID
+    return QStringLiteral(R"(
+QComboBox {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 12pt;
+}
+QComboBox QAbstractItemView {
+    padding: 6px;
+}
+QComboBox QAbstractItemView::item {
+    min-height: 52px;
+    padding: 10px 12px;
+    font-size: 12pt;
+}
+)");
+#else
+    return QString();
+#endif
+}
+
+/**
+ * 把移动端的触摸尺寸直接应用到下拉框的弹出列表。
+ *
+ * 只对仍是原生 QComboBox 的控件有意义：Android 上 native popup 收不到
+ * 触摸事件，用 TouchComboBox 才有意义。桌面端本就是空操作。
+ *
+ * 注：Android 上真正可用的下拉框请直接用 TouchComboBox，
+ * 它把列表做成主窗口内的 overlay，从根本上避开 native popup 的触摸问题。
+ */
+inline void applyTouchCombo(QComboBox *combo)
+{
+    if (!combo || !combo->view()) {
+        return;
+    }
+#ifdef Q_OS_ANDROID
+    combo->setMinimumHeight(48);
+    combo->setStyleSheet(QStringLiteral("font-size: 12pt; padding: 8px 10px;"));
+    combo->view()->setStyleSheet(QStringLiteral(R"(
+QAbstractItemView {
+    background-color: #1E2636;
+    border: 1px solid #2A3444;
+    border-radius: 6px;
+    padding: 6px;
+    color: #E8E9ED;
+    outline: none;
+    selection-background-color: #38BDF8;
+    selection-color: #0A0D12;
+}
+QAbstractItemView::item {
+    color: #E8E9ED;
+    background-color: transparent;
+    min-height: 52px;
+    padding: 10px 12px;
+    font-size: 12pt;
+}
+QAbstractItemView::item:selected {
+    background-color: #38BDF8;
+    color: #0A0D12;
+}
+QAbstractItemView::item:hover {
+    background-color: #2A3444;
+    color: #E8E9ED;
+}
+)"));
+#endif
+}
+
+/**
  * 对话框统一样式。
  *
  * 配色必须和主窗口同一套——主界面是三层：窗口 #0A0D12、面板 #0F131C、
@@ -268,7 +367,7 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; }
 QScrollBar:horizontal { background-color: #1E2636; height: 10px; border-radius: 5px; }
 QScrollBar::handle:horizontal { background-color: #38BDF8; border-radius: 5px; min-width: 20px; }
 QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0px; }
-)") + sliderStyleSheet();
+)") + sliderStyleSheet() + comboTouchStyleSheet();
 }
 
 /**

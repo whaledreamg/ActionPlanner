@@ -1,5 +1,6 @@
 #include "ui/HandSegmentEditDialog.h"
 #include "ui/DialogUtil.h"
+#include "ui/TouchComboBox.h"
 #include "robot/HandController.h"
 
 #include <QComboBox>
@@ -65,7 +66,7 @@ QWidget* HandSegmentEditDialog::createHead()
     row->setSpacing(8);
 
     row->addWidget(new QLabel(QStringLiteral("预设"), head));
-    m_presetCombo = new QComboBox(head);
+    m_presetCombo = new TouchComboBox(head);
     m_presetCombo->addItem(QStringLiteral("—"), QString());
     for (const QString &name : HandProtocol::presetNames()) {
         m_presetCombo->addItem(name, name);

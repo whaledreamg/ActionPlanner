@@ -50,7 +50,7 @@ TimelineEditor::TimelineEditor(QWidget *parent)
             ui->btnAddSegment, ui->btnAddHandSegment,
             ui->btnDuplicateSegment, ui->btnDeleteSegment,
             ui->labelSeparator,
-            ui->btnSave, ui->btnLoad, ui->btnSettings,
+            ui->btnNew, ui->btnSave, ui->btnLoad, ui->btnSettings,
         };
         for (QWidget *w : toolbarWidgets) {
             if (w) {
@@ -94,6 +94,7 @@ TimelineEditor::TimelineEditor(QWidget *parent)
     connect(ui->btnPlay, &QPushButton::clicked, this, &TimelineEditor::onPlay);
     connect(ui->btnPause, &QPushButton::clicked, this, &TimelineEditor::onPause);
     connect(ui->btnStop, &QPushButton::clicked, this, &TimelineEditor::onStop);
+    connect(ui->btnNew, &QPushButton::clicked, this, &TimelineEditor::onNew);
     connect(ui->btnSave, &QPushButton::clicked, this, &TimelineEditor::onSave);
     connect(ui->btnLoad, &QPushButton::clicked, this, &TimelineEditor::onLoad);
     connect(ui->btnSettings, &QPushButton::clicked,
@@ -742,6 +743,34 @@ void TimelineEditor::editSegment(int index)
 
 // ---------------------------------------------------------------- 文件
 
+void TimelineEditor::onNew()
+{
+    // 播放中不能清空：轨迹正在被下发，清掉会让控制器继续按已发出去的
+    // 目标走，而本地已经没有任何片段了
+    if (m_engine->isActive()) {
+        MessageCenter::warning(this, QStringLiteral("播放中不能新建，请先停止播放"));
+        return;
+    }
+
+    // 不做二次确认，直接清空。确认框在 Android 上是独立原生窗口，
+    // 按钮常常收不到触摸事件，弹出来点不掉反而把流程卡住；
+    // 真要防误触，「撤销」比确认框更合适。
+    while (m_model->segmentCount() > 0) {
+        m_model->removeSegment(0);
+    }
+
+    m_canvas->setSelectedIndex(-1);
+    m_canvas->setPlayheadTime(-1.0);
+    m_canvas->update();
+
+    ui->labelProgress->setText(QStringLiteral("0.00 / 0.00 s"));
+
+    // 循环勾选框在无片段时不可用
+    updatePlaybackUi();
+
+    setStatusText(QStringLiteral("已新建动作序列"));
+}
+
 QString TimelineEditor::loadStartFolder() const
 {
     // 未设置：返回空串，让系统对话框自己决定（通常沿用上次打开的位置）
@@ -937,6 +966,8 @@ void TimelineEditor::updatePlaybackUi()
     ui->btnDeleteSegment->setEnabled(canEdit && m_canvas->selectedIndex() >= 0);
     ui->btnDuplicateSegment->setEnabled(canEdit && m_canvas->selectedIndex() >= 0);
     ui->btnLoad->setEnabled(canEdit);
+    // 新建同样会清空时间轴，播放中必须锁住
+    ui->btnNew->setEnabled(canEdit);
 }
 
 void TimelineEditor::setStatusText(const QString& text)
